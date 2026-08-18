@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ACCESS_GRANTED.exe — PixelOS</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(ellipse at center, rgba(180,77,255,0.08) 0%, var(--bg-deep) 70%);
+        }
+
+        .login-wrapper {
+            position: relative; z-index: 1;
+            width: 420px; max-width: 90vw;
+            animation: fadeSlideIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center; margin-bottom: 28px;
+        }
+
+        .login-logo {
+            font-family: var(--font-display);
+            font-size: 42px; font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 4px;
+        }
+
+        .login-version {
+            font-family: var(--font-mono);
+            font-size: 11px; color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .login-card {
+            padding: 32px 24px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 10px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .error-text {
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--neon-red);
+            min-height: 20px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .error-text.glitch {
+            animation: glitch 0.3s ease-in-out;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: var(--neon-purple);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-header">
+            <div class="login-logo">PIXEL_OS</div>
+            <div class="login-version">v3.1 // ERIKA_ENGINE</div>
+        </div>
+
+        <div class="glass-card login-card">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" class="input-cyber" value="admin" disabled>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" class="input-cyber" id="passwordInput" placeholder="••••••••" autofocus>
+            </div>
+
+            <button class="btn btn-full" id="loginBtn" onclick="doLogin()">
+                <span id="btnText">[ AUTHENTICATE ]</span>
+                <div class="spinner" id="spinner"></div>
+            </button>
+
+            <div class="error-text" id="errorMsg"></div>
+        </div>
+    </div>
+
+<script>
+const passInput = document.getElementById('passwordInput');
+const loginBtn = document.getElementById('loginBtn');
+const btnText = document.getElementById('btnText');
+const spinner = document.getElementById('spinner');
+const errorMsg = document.getElementById('errorMsg');
+
+passInput.addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+
+function showError(msg) {
+    errorMsg.textContent = '[!] ' + msg;
+    errorMsg.classList.add('glitch');
+    setTimeout(() => errorMsg.classList.remove('glitch'), 400);
+}
+
+function setLoading(loading) {
+    btnText.style.display = loading ? 'none' : 'inline';
+    spinner.style.display = loading ? 'block' : 'none';
+    loginBtn.disabled = loading;
+    passInput.disabled = loading;
+}
+
+async function doLogin() {
+    const password = passInput.value.trim();
+    if (!password) { showError('Password required'); return; }
+
+    setLoading(true);
+    errorMsg.textContent = '';
+
+    try {
+        const r = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        const d = await r.json();
+        if (d.status === 'success') {
+            document.querySelector('.login-wrapper').style.opacity = '0';
+            document.querySelector('.login-wrapper').style.transition = 'opacity 0.4s ease';
+            setTimeout(() => { window.location.href = d.redirect || '/'; }, 400);
+        } else {
+            showError(d.message || 'Access denied');
+            passInput.value = '';
+            setLoading(false);
+        }
+    } catch {
+        showError('Connection lost');
+        setLoading(false);
+    }
+}
+</script>
+</body>
+</html>
+<!-- BOOT SCREEN + CRT для страницы входа -->
+<script src="/static/js/boot.js"></script>
+<script src="/static/js/context-menu.js"></script>
+<div class="crt-overlay"></div>
+<div class="crt-vignette"></div>

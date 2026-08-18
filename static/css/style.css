@@ -1,0 +1,612 @@
+/* ============================================
+   PIXELOS CYBERPUNK HACKER HUD — MAIN STYLE
+   ============================================ */
+
+/* --- GOOGLE FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&display=swap');
+
+/* --- CSS ПЕРЕМЕННЫЕ --- */
+:root {
+    /* Фон */
+    --bg-deep: #050510;
+    --bg-surface: rgba(8, 8, 24, 0.85);
+    --bg-card: rgba(12, 12, 32, 0.75);
+
+    /* Неоновая палитра */
+    --neon-purple: #b44dff;
+    --neon-blue: #00d4ff;
+    --neon-cyan: #00ffd5;
+    --neon-green: #00ff66;
+    --neon-pink: #ff2d78;
+    --neon-red: #ff3333;
+    --neon-yellow: #ffcc00;
+
+    /* Текст */
+    --text-primary: #e0e0f0;
+    --text-secondary: #8899bb;
+    --text-dim: #556688;
+
+    /* Границы */
+    --border-glow: rgba(180, 77, 255, 0.3);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+
+    /* Шрифты */
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+
+    /* Размеры */
+    --radius-hex: 4px;
+    --transition-speed: 0.25s;
+}
+
+/* --- СБРОС --- */
+*, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html, body {
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    font-family: var(--font-mono);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- ФОН С СЕТКОЙ --- */
+body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(180, 77, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180, 77, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- СКАН-ЛИНИИ --- */
+body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9998;
+}
+
+/* ============================================
+   КНОПКИ (ШЕСТИУГОЛЬНЫЕ / СКОШЕННЫЕ)
+   ============================================ */
+
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: #fff;
+    background: transparent;
+    border: 1px solid var(--neon-purple);
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    position: relative;
+    z-index: 1;
+}
+
+.btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+    z-index: -1;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(180, 77, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn--small {
+    padding: 8px 16px;
+    font-size: 11px;
+    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+}
+
+.btn--danger {
+    border-color: var(--neon-red);
+}
+
+.btn--danger::before {
+    background: linear-gradient(135deg, var(--neon-red), var(--neon-pink));
+}
+
+.btn--success {
+    border-color: var(--neon-green);
+}
+
+.btn--success::before {
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+}
+
+/* ============================================
+   GLASSMORPHISM КАРТОЧКИ
+   ============================================ */
+
+.glass-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glow);
+    border-radius: 2px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    position: relative;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+    opacity: 0.6;
+}
+
+/* ============================================
+   ТЕРМИНАЛ (ЧАТ)
+   ============================================ */
+
+.terminal {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--border-glow);
+    border-radius: 2px;
+    padding: 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-y: auto;
+    position: relative;
+}
+
+.terminal::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 24px;
+    background: rgba(180, 77, 255, 0.08);
+    border-bottom: 1px solid var(--border-glow);
+    display: flex; align-items: center;
+    padding-left: 12px;
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+.terminal .msg-user {
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.terminal .msg-user::before {
+    content: '┌─ user@erik ~ $ ';
+    color: var(--neon-purple);
+    font-weight: 600;
+}
+
+.terminal .msg-erik {
+    color: var(--neon-green);
+    margin-bottom: 6px;
+}
+
+.terminal .msg-erik::before {
+    content: '└─ erik@ai ~ # ';
+    color: var(--neon-cyan);
+    font-weight: 600;
+}
+
+.terminal .cursor::after {
+    content: '▌';
+    color: var(--neon-green);
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* ============================================
+   ИНПУТЫ
+   ============================================ */
+
+.input-cyber {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-glow);
+    border-radius: 2px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    outline: none;
+    transition: all var(--transition-speed);
+}
+
+.input-cyber:focus {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 15px rgba(180, 77, 255, 0.2), inset 0 0 15px rgba(180, 77, 255, 0.05);
+}
+
+.input-cyber::placeholder {
+    color: var(--text-dim);
+}
+
+/* ============================================
+   ТАБЛИЦА (АДМИНКА)
+   ============================================ */
+
+.table-cyber {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.table-cyber th {
+    background: rgba(180, 77, 255, 0.1);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--neon-purple);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 10px;
+    border-bottom: 1px solid var(--border-glow);
+}
+
+.table-cyber td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.table-cyber tr:hover td {
+    background: rgba(180, 77, 255, 0.04);
+}
+
+.table-cyber .ip-cell { color: var(--neon-green); }
+.table-cyber .time-cell { color: var(--text-primary); }
+.table-cyber .status-success { color: var(--neon-green); font-weight: 700; }
+.table-cyber .status-fail { color: var(--neon-red); font-weight: 700; }
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.glitch:hover {
+    animation: glitch 0.3s ease-in-out;
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--neon-purple), 0 0 10px rgba(180, 77, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 10px var(--neon-purple), 0 0 20px rgba(180, 77, 255, 0.5);
+    }
+}
+
+.neon-pulse {
+    animation: neonPulse 2s infinite;
+}
+
+/* ============================================
+   АДАПТИВ
+   ============================================ */
+
+@media (max-width: 600px) {
+    :root {
+        --radius-hex: 2px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .glass-card {
+        padding: 16px !important;
+    }
+
+    .terminal {
+        font-size: 11px;
+        padding: 10px;
+    }
+
+    .table-cyber {
+        font-size: 10px;
+    }
+
+    .table-cyber th, .table-cyber td {
+        padding: 6px 8px;
+    }
+}
+
+/* ============================================
+   CRT EFFECT (SCANLINES + FLICKER)
+   ============================================ */
+
+.crt-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.15;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    animation: crtFlicker 0.15s infinite alternate;
+}
+
+@keyframes crtFlicker {
+    0% { opacity: 0.12; }
+    50% { opacity: 0.18; }
+    100% { opacity: 0.14; }
+}
+
+/* Виньетка по краям */
+.crt-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9996;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 60%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+/* ============================================
+   GLITCH TEXT EFFECT
+   ============================================ */
+
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+}
+
+.glitch-text:hover::before,
+.glitch-text:hover::after {
+    opacity: 1;
+}
+
+.glitch-text::before {
+    color: var(--neon-blue);
+    animation: glitchShift 0.4s infinite alternate-reverse;
+    clip-path: inset(0 0 50% 0);
+}
+
+.glitch-text::after {
+    color: var(--neon-pink);
+    animation: glitchShift 0.3s infinite alternate;
+    clip-path: inset(50% 0 0 0);
+}
+
+@keyframes glitchShift {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -1px); }
+    60% { transform: translate(-1px, -3px); }
+    80% { transform: translate(2px, 1px); }
+    100% { transform: translate(0); }
+}
+
+/* Вариант без hover — постоянный глитч */
+.glitch-text--active::before,
+.glitch-text--active::after {
+    opacity: 0.6;
+}
+
+.glitch-text--active::before {
+    animation: glitchShift 0.3s infinite alternate-reverse;
+}
+
+.glitch-text--active::after {
+    animation: glitchShift 0.25s infinite alternate;
+}
+
+/* ============================================
+   CONTEXT MENU
+   ============================================ */
+
+.cyber-context-menu {
+    position: fixed;
+    z-index: 99999;
+    min-width: 200px;
+    background: rgba(8, 8, 24, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(180, 77, 255, 0.2);
+    padding: 6px 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    animation: menuAppear 0.15s ease;
+    clip-path: polygon(0% 0%, 100% 0%, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0% 100%);
+}
+
+@keyframes menuAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cyber-menu-item {
+    padding: 10px 18px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 2px solid transparent;
+}
+
+.cyber-menu-item:hover {
+    background: rgba(180, 77, 255, 0.12);
+    color: var(--text-primary);
+    border-left-color: var(--neon-purple);
+    text-shadow: 0 0 8px rgba(180, 77, 255, 0.4);
+}
+
+.cyber-menu-item:active {
+    background: rgba(180, 77, 255, 0.2);
+}
+
+.cyber-menu-divider {
+    height: 1px;
+    background: var(--border-glow);
+    margin: 4px 8px;
+}
+
+.cyber-menu-icon {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+}
+
+/* ============================================
+   BOOT SCREEN
+   ============================================ */
+
+.boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: var(--bg-deep);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    color: var(--neon-green);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.boot-screen.fade-out {
+    opacity: 0;
+    transform: scale(1.1);
+    pointer-events: none;
+}
+
+.boot-logo {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--neon-purple);
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(180, 77, 255, 0.6);
+}
+
+.boot-log {
+    width: 80%;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.boot-log-line {
+    font-size: 11px;
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: logAppear 0.3s ease forwards;
+}
+
+.boot-log-line:nth-child(1) { animation-delay: 0.2s; }
+.boot-log-line:nth-child(2) { animation-delay: 0.5s; }
+.boot-log-line:nth-child(3) { animation-delay: 0.8s; }
+.boot-log-line:nth-child(4) { animation-delay: 1.1s; }
+
+.boot-log-line .ok { color: var(--neon-green); }
+.boot-log-line .warn { color: var(--neon-yellow); }
+
+@keyframes logAppear {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.boot-progress-wrap {
+    width: 80%;
+    max-width: 500px;
+    height: 4px;
+    background: rgba(0, 255, 102, 0.1);
+    border: 1px solid rgba(0, 255, 102, 0.2);
+    border-radius: 1px;
+    overflow: hidden;
+}
+
+.boot-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.boot-status {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    letter-spacing: 2px;
+}

@@ -7,10 +7,5 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        
-        response_data = {
-            "status": "success",
-            "message": "Сервер работает корректно!",
-            "server": "Vercel Python"
-        }
-        self.wfile.write(json.dumps(response_data, ensure_ascii=False).encode('utf-8'))
+        response = {"status": "success", "message": "PixelOS Vercel API работает!"}
+        self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))

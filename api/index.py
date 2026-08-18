@@ -1,23 +1,25 @@
 from http.server import BaseHTTPRequestHandler
-import json, requests
+import json, requests, urllib.parse
 from urllib.parse import parse_qs, urlparse
 
 def get_erik_reply(prompt):
     system_prompt = "Ты — Эрик, саркастичный и умный ИИ-ассистент. Отвечай кратко, по делу, с легким юмором."
-    url = "https://text.pollinations.ai/"
-    payload = {
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt}
-        ],
-        "model": "openai"
+    
+    encoded_prompt = urllib.parse.quote(prompt)
+    encoded_system = urllib.parse.quote(system_prompt)
+    url = f"https://text.pollinations.ai/{encoded_prompt}?system={encoded_system}&model=openai"
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
+    
     try:
-        res = requests.post(url, json=payload, timeout=8)
+        res = requests.get(url, headers=headers, timeout=8)
         if res.status_code == 200 and res.text.strip():
             return res.text.strip()
     except Exception:
         pass
+        
     return "Связь перегружена. Попробуй еще раз через минуту."
 
 class handler(BaseHTTPRequestHandler):
